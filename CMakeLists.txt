@@ -46,7 +46,7 @@ option_if_not_defined(LSPCPP_INSTALL "Create lsp install target" OFF)
 option_if_not_defined(LSPCPP_SUPPORT_BOEHM_GC
     "Enable support for Boehm GC. Boehm GC must be available by find_package(BDWgc CONFIG REQUIRED)." OFF)
 option_if_not_defined(LSPCPP_USE_CPP17 "Use C++17 for compilation. Setting this to off requires boost-optional." OFF)
-
+option_if_not_defined(LSPCPP_DISABLE_VS_NUGET "If on visual studio generator, diables Nuget. Requires boost libraries to be installed elsewhere." OFF)
 
 # Boehm GC
 
@@ -108,14 +108,16 @@ function(lspcpp_set_target_options target)
 
     set_property(TARGET ${target} PROPERTY CXX_EXTENSIONS OFF)
 
-    if (CMAKE_GENERATOR MATCHES "Visual Studio.*")
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost 1.76.0.0)
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost_chrono-vc141 1.76.0.0)
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost_date_time-vc141 1.76.0.0)
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost_filesystem-vc141 1.76.0.0)
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost_program_options-vc141 1.76.0.0)
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost_system-vc141 1.76.0.0)
-        lspcpp_set_target_options_with_nuget_pkg(${target} boost_thread-vc141 1.76.0.0)
+    if (NOT LSPCPP_DISABLE_VS_NUGET)
+        if (CMAKE_GENERATOR MATCHES "Visual Studio.*")
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost 1.76.0.0)
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost_chrono-vc141 1.76.0.0)
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost_date_time-vc141 1.76.0.0)
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost_filesystem-vc141 1.76.0.0)
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost_program_options-vc141 1.76.0.0)
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost_system-vc141 1.76.0.0)
+            lspcpp_set_target_options_with_nuget_pkg(${target} boost_thread-vc141 1.76.0.0)
+        endif()
     endif()
 
     # Enable all warnings
@@ -185,7 +187,7 @@ add_subdirectory(third_party/uri)
 ###########################################################
 # boost library
 ###########################################################
-if (CMAKE_GENERATOR MATCHES "Visual Studio.*")
+if ((NOT LSPCPP_DISABLE_VS_NUGET) AND (CMAKE_GENERATOR MATCHES "Visual Studio.*"))
     INSTALL_NUGET(boost 1.76.0.0)
     INSTALL_NUGET(boost_chrono-vc141 1.76.0.0)
     INSTALL_NUGET(boost_date_time-vc141 1.76.0.0)
