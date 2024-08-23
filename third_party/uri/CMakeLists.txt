@@ -20,43 +20,9 @@ set(CMAKE_VERBOSE_MAKEFILE true)
 
 message(STATUS "Configure compiler")
 message("Using ${CMAKE_CXX_COMPILER_ID}")
-if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
-  INCLUDE(CheckCXXCompilerFlag)
-  CHECK_CXX_COMPILER_FLAG(-std=c++11 HAVE_STD11)
 
-  if (HAVE_STD11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  else()
-    message(FATAL_ERROR "No C++ 11 support (Compiler does not define -std=c++11).")
-  endif()
-
-  if (Uri_FULL_WARNINGS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-  endif()
-
-  if (Uri_WARNINGS_AS_ERRORS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-parentheses")
-  endif()
-
-  message("C++ Flags: ${CMAKE_CXX_FLAGS} link flags: ${CMAKE_CXX_LINK_FLAGS}")
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-  if (NOT Uri_DISABLE_LIBCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  endif()
-
-  if (Uri_FULL_WARNINGS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-  endif()
-
-  if (Uri_WARNINGS_AS_ERRORS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-parentheses")
-  endif()
-
-  message("C++ Flags: ${CMAKE_CXX_FLAGS} link flags: ${CMAKE_CXX_LINK_FLAGS}")
-endif()
-
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if (MSVC)
   if(DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1900)
