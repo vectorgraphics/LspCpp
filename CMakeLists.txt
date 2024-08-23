@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.25)
 
 if(POLICY CMP0025)
     # detect Apple's Clang
@@ -47,6 +47,9 @@ option_if_not_defined(LSPCPP_SUPPORT_BOEHM_GC
     "Enable support for Boehm GC. Boehm GC must be available by find_package(BDWgc CONFIG REQUIRED)." OFF)
 option_if_not_defined(LSPCPP_USE_CPP17 "Use C++17 for compilation. Setting this to off requires boost-optional." OFF)
 option_if_not_defined(LSPCPP_DISABLE_VS_NUGET "If on visual studio generator, diables Nuget. Requires boost libraries to be installed elsewhere." OFF)
+
+option_if_not_defined(LSPCPP_MIN_TARGET_WIN10 
+    "If on windows, target Windows 10 and later. Otherwise targets Windows 7 and later by default. Inert for non-windows systems." ON)
 
 # Boehm GC
 
@@ -173,6 +176,13 @@ function(lspcpp_set_target_options target)
         target_compile_definitions(${target} PUBLIC LSPCPP_USEGC)
     endif()
 
+    if (WIN32)
+    if (LSPCPP_MIN_TARGET_WIN10)
+        target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0A00)
+    else()
+        target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0601)
+    endif()
+    endif()
 endfunction()
 
 
