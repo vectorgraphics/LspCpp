@@ -15,6 +15,11 @@ set(Uri_SRCS
   )
 
 add_library(network-uri ${Uri_SRCS})
+
+if (WIN32)
+  target_compile_definitions(network-uri PUBLIC NOMINMAX)
+endif()
+
 target_link_libraries(network-uri)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
   if (NOT Uri_DISABLE_LIBCXX)
