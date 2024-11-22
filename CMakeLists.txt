@@ -48,7 +48,7 @@ option_if_not_defined(LSPCPP_SUPPORT_BOEHM_GC
 option_if_not_defined(LSPCPP_USE_CPP17 "Use C++17 for compilation. Setting this to off requires boost-optional." OFF)
 option_if_not_defined(LSPCPP_DISABLE_VS_NUGET "If on visual studio generator, diables Nuget. Requires boost libraries to be installed elsewhere." OFF)
 
-option_if_not_defined(LSPCPP_MIN_TARGET_WIN10 
+option_if_not_defined(LSPCPP_MIN_TARGET_WIN10
     "If on windows, target Windows 10 and later. Otherwise targets Windows 7 and later by default. Inert for non-windows systems." ON)
 
 # Boehm GC
@@ -174,6 +174,10 @@ function(lspcpp_set_target_options target)
     if (LSPCPP_SUPPORT_BOEHM_GC)
         target_link_libraries(${target} PUBLIC BDWgc::gc)
         target_compile_definitions(${target} PUBLIC LSPCPP_USEGC)
+        target_include_directories(
+                ${target} PUBLIC
+                $<LIST:TRANSFORM,$<TARGET_PROPERTY:BDWgc::gc,INTERFACE_INCLUDE_DIRECTORIES>,APPEND,/gc>
+        )
     endif()
 
     if (WIN32)
